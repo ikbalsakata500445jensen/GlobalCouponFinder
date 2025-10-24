@@ -1,0 +1,17 @@
+[build]
+builder = "NIXPACKS"
+
+[deploy]
+startCommand = "cd scrapers && celery -A celery_app worker --loglevel=info --concurrency=5"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
+
+[env]
+DATABASE_URL = "postgresql://postgres:Kemun!ng555@db.tuegworkqglgbtitazwm.supabase.co:5432/postgres"
+REDIS_URL = "redis://default:gEyBsxKTT0lsu2hYiNMCQr9HYlDfltyY@redis-13520.c74.us-east-1-4.ec2.redns.redis-cloud.com:13520"
+PLAYWRIGHT_BROWSERS_PATH = "/tmp/playwright-browsers"
+HEADLESS = "true"
+SCRAPE_FREQUENCY_MINUTES = "60"
+USE_PROXIES = "false"
