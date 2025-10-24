@@ -43,6 +43,7 @@ Thumbs.db
 *.db
 *.sqlite
 *.sqlite3
+couponfinder.db
 
 # Logs
 *.log
@@ -52,11 +53,6 @@ logs/
 .env
 .env.local
 .env.production
-
-# Node modules
-node_modules/
-.next/
-out/
 
 # Python cache
 __pycache__/

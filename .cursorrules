@@ -12,7 +12,7 @@ You are working on GlobalCouponFinder - a coupon aggregation platform that scrap
 - Backend services are 100% FREE tier only (Supabase, Railway, Upstash, Vercel)
 - Users can filter by REGION (America/Europe/Asia) and COUNTRY
 - Food delivery coupons are a PRIMARY feature (UberEats, DoorDash, GrabFood, etc.)
-- Free users: 50 coupons/day + ads | Premium users: unlimited + no ads
+- All users: 50 coupons/day + maximum ads (no premium features)
 
 ## TECH STACK (DO NOT DEVIATE)
 Backend:
@@ -39,9 +39,9 @@ Frontend:
 - AdMob integration
 
 Monetization:
-- Google AdMob (banner, native, interstitial, rewarded ads)
+- Google AdMob (banner, native, interstitial, rewarded ads) - MAXIMUM ADS
 - Affiliate commissions (ShareASale, CJ, Rakuten, Amazon Associates)
-- Stripe subscriptions ($4.99/month premium)
+- NO premium subscriptions - all users see ads
 
 ## FILE STRUCTURE
 ```
@@ -72,14 +72,14 @@ E:\Projects\GlobalCouponFinder\
 
 ## DATABASE SCHEMA RULES
 Tables (DO NOT modify without explicit request):
-- users (authentication, premium status, daily limits)
+- users (authentication, daily limits)
 - stores (100+ e-commerce stores with scraper configs)
 - coupons (discount codes with metadata)
 - categories (fashion, electronics, food-delivery, etc.)
 - coupon_clicks (analytics)
 - coupon_feedback (user verification)
 - scrape_logs (monitoring)
-- subscriptions (Stripe billing)
+# Removed subscriptions table - no premium features
 
 Key relationships:
 - Store → Many Coupons
@@ -155,7 +155,7 @@ Component patterns:
 - Client components for state management
 
 AdMob integration:
-- Show ads ONLY to free users (check user.is_premium)
+- Show ads to ALL users (no premium features)
 - Banner ads: top of pages
 - Native ads: every 6 coupons in grid
 - Interstitial ads: after 3rd coupon click
@@ -205,11 +205,7 @@ AdMob setup:
 3. Add AdMob script to <head> in layout.tsx
 4. Place <ins> tags with data-ad-client and data-ad-slot
 
-Stripe subscription:
-1. Create products in Stripe dashboard
-2. Implement checkout session creation
-3. Handle webhook for subscription events
-4. Update user.is_premium on successful payment
+# Removed Stripe integration - no premium features
 
 ## DEPLOYMENT RULES
 Backend (Railway):
@@ -236,14 +232,14 @@ Frontend (Vercel):
 ❌ Running scrapers locally instead of Railway
 ❌ Using localStorage in server components
 ❌ Creating custom UI components instead of shadcn/ui
-❌ Forgetting to check user.is_premium before showing ads
+❌ Hiding ads from any users
 ❌ Not implementing rate limiting on API endpoints
 ❌ Hardcoding API URLs (use environment variables)
 ❌ Using exact Tailwind arbitrary values
 ❌ Not handling scraping errors properly
 ❌ Forgetting to generate affiliate URLs for clicks
 ❌ Not persisting region/country filters
-❌ Showing ads to premium users
+❌ Creating premium features
 ❌ Not implementing daily coupon limits for free users
 
 ## CODING PRINCIPLES
@@ -271,7 +267,7 @@ Frontend (Vercel):
 2. E: drive installation (NEVER C: drive)
 3. Region/country filtering (core feature)
 4. Food delivery prominence (key selling point)
-5. Premium vs Free user experience
+5. Maximum ad monetization
 6. Mobile responsiveness
 7. AdMob integration
 8. Affiliate tracking accuracy
@@ -280,7 +276,7 @@ Frontend (Vercel):
 
 ## IF STUCK OR UNSURE
 Ask the user:
-- "Should this feature be for free users or premium only?"
+- "Should this feature show maximum ads?"
 - "Which region should this apply to (America/Europe/Asia)?"
 - "Should this be deployed to Railway or Vercel?"
 - "Is this a critical feature or nice-to-have?"

@@ -21,9 +21,8 @@ class User(Base):
     email = Column(String(255), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
     full_name = Column(String(255))
-    is_premium = Column(Boolean, default=False)
     is_admin = Column(Boolean, default=False)
-    premium_expires_at = Column(DateTime, nullable=True)
+    # Removed premium features - all users are free users
     daily_coupon_count = Column(Integer, default=0)
     last_coupon_reset = Column(DateTime, default=datetime.utcnow)
     region = Column(String(20), default='america')  # america, europe, asia
@@ -32,7 +31,7 @@ class User(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
     favorites = relationship('UserFavorite', back_populates='user', cascade='all, delete-orphan')
-    subscriptions = relationship('Subscription', back_populates='user', cascade='all, delete-orphan')
+    # Removed subscriptions - no premium features
 
 class Store(Base):
     __tablename__ = 'stores'
@@ -150,19 +149,4 @@ class ScrapeLog(Base):
     
     store = relationship('Store', back_populates='scrape_logs')
 
-class Subscription(Base):
-    __tablename__ = 'subscriptions'
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    stripe_subscription_id = Column(String(255), unique=True, nullable=True)
-    stripe_customer_id = Column(String(255), nullable=True)
-    status = Column(String(20), nullable=False)  # active, cancelled, expired, trialing
-    plan = Column(String(20), nullable=False)  # monthly, yearly
-    current_period_start = Column(DateTime, nullable=True)
-    current_period_end = Column(DateTime, nullable=True)
-    cancel_at_period_end = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    user = relationship('User', back_populates='subscriptions')
+# Removed Subscription model - no premium features
