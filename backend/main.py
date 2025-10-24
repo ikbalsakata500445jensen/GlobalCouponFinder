@@ -1,98 +1,80 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import JSONResponse
-import os
-from datetime import datetime
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+import sentry_sdk
+from config import settings
+from database import init_db
 
-# Import routers (to be created)
-# from routers import coupons, users, auth, subscriptions
+# Initialize Sentry
+if settings.SENTRY_DSN:
+    sentry_sdk.init(
+        dsn=settings.SENTRY_DSN,
+        traces_sample_rate=1.0,
+        environment="production" if not settings.DEBUG else "development"
+    )
 
+# Create FastAPI app
 app = FastAPI(
-    title="GlobalCouponFinder API",
-    description="API for scraping and managing global coupon codes",
-    version="1.0.0"
+    title=settings.APP_NAME,
+    version="1.0.0",
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json"
 )
 
-# CORS configuration
-origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
-
+# CORS Middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=settings.CORS_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# GZIP Compression
+app.add_middleware(GZipMiddleware, minimum_size=1000)
 
+# Rate Limiting
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# Startup event
+@app.on_event("startup")
+async def startup_event():
+    init_db()
+    print(f"{settings.APP_NAME} started successfully!")
+
+# Root endpoint
 @app.get("/")
-async def root():
-    """Root endpoint"""
+def root():
     return {
-        "message": "Welcome to GlobalCouponFinder API",
+        "message": f"Welcome to {settings.APP_NAME} API",
         "version": "1.0.0",
-        "timestamp": datetime.utcnow().isoformat(),
-        "status": "operational"
+        "docs": "/api/docs"
     }
 
-
+# Health check
 @app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
-        "timestamp": datetime.utcnow().isoformat()
-    }
+def health_check():
+    return {"status": "healthy", "service": settings.APP_NAME}
 
+# Import and include routers
+from routers import stores
 
-@app.get("/api/regions")
-async def get_regions():
-    """Get available regions"""
-    return {
-        "regions": [
-            {
-                "id": "america",
-                "name": "America",
-                "countries": [
-                    {"code": "US", "name": "United States"},
-                    {"code": "CA", "name": "Canada"},
-                    {"code": "MX", "name": "Mexico"}
-                ]
-            },
-            {
-                "id": "europe",
-                "name": "Europe",
-                "countries": [
-                    {"code": "GB", "name": "United Kingdom"},
-                    {"code": "DE", "name": "Germany"},
-                    {"code": "FR", "name": "France"},
-                    {"code": "IT", "name": "Italy"},
-                    {"code": "ES", "name": "Spain"}
-                ]
-            },
-            {
-                "id": "asia",
-                "name": "Asia",
-                "countries": [
-                    {"code": "IN", "name": "India"},
-                    {"code": "CN", "name": "China"},
-                    {"code": "JP", "name": "Japan"},
-                    {"code": "SG", "name": "Singapore"},
-                    {"code": "TH", "name": "Thailand"}
-                ]
-            }
-        ]
-    }
+app.include_router(stores.router, prefix="/api/v1/stores", tags=["Stores"])
 
-
-# Include routers (uncomment when routers are created)
-# app.include_router(coupons.router, prefix="/api/coupons", tags=["coupons"])
-# app.include_router(users.router, prefix="/api/users", tags=["users"])
-# app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
-# app.include_router(subscriptions.router, prefix="/api/subscriptions", tags=["subscriptions"])
-
+# Import and include other routers (will create in next phases)
+# from routers import auth, coupons, admin, subscriptions
+# app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
+# app.include_router(coupons.router, prefix="/api/v1/coupons", tags=["Coupons"])
+# app.include_router(admin.router, prefix="/api/v1/admin", tags=["Admin"])
+# app.include_router(subscriptions.router, prefix="/api/v1/subscriptions", tags=["Subscriptions"])
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-
+    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)

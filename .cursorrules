@@ -1,0 +1,313 @@
+---START OF .cursorrules FILE---
+
+# GlobalCouponFinder - Cursor AI Rules
+# This file teaches Cursor AI about your project to prevent it from going off-track
+
+## PROJECT OVERVIEW
+You are working on GlobalCouponFinder - a coupon aggregation platform that scrapes 100+ e-commerce websites across America, Europe, and Asia for discount codes.
+
+## CRITICAL CONSTRAINTS
+- ALL installations MUST be on E: drive (C: drive has low space)
+- Python scraping runs on Railway.app (cloud) - NEVER locally
+- Backend services are 100% FREE tier only (Supabase, Railway, Upstash, Vercel)
+- Users can filter by REGION (America/Europe/Asia) and COUNTRY
+- Food delivery coupons are a PRIMARY feature (UberEats, DoorDash, GrabFood, etc.)
+- Free users: 50 coupons/day + ads | Premium users: unlimited + no ads
+
+## TECH STACK (DO NOT DEVIATE)
+Backend:
+- FastAPI (Python 3.11+)
+- PostgreSQL (Supabase FREE tier)
+- Redis (Upstash FREE tier)
+- SQLAlchemy ORM
+- Pydantic for validation
+- JWT authentication
+
+Scraping Service:
+- Python + Celery + Redis
+- BeautifulSoup4 (generic HTML scraping)
+- Playwright (JavaScript-heavy sites)
+- Deployed on Railway.app (NOT local)
+- Runs hourly via Celery Beat
+
+Frontend:
+- Next.js 14 (App Router)
+- TypeScript
+- TailwindCSS + shadcn/ui
+- Zustand (state management)
+- React Query (data fetching)
+- AdMob integration
+
+Monetization:
+- Google AdMob (banner, native, interstitial, rewarded ads)
+- Affiliate commissions (ShareASale, CJ, Rakuten, Amazon Associates)
+- Stripe subscriptions ($4.99/month premium)
+
+## FILE STRUCTURE
+```
+E:\Projects\GlobalCouponFinder\
+├── backend\
+│   ├── models.py (SQLAlchemy models)
+│   ├── database.py (DB connection)
+│   ├── main.py (FastAPI app)
+│   ├── config.py (environment variables)
+│   ├── routers\ (API endpoints)
+│   ├── seed_stores.py (100+ stores)
+│   └── requirements.txt
+├── scrapers\
+│   ├── celery_app.py (Celery config)
+│   ├── tasks.py (scraping tasks)
+│   ├── base_scraper.py
+│   ├── generic_scraper.py
+│   ├── javascript_scraper.py
+│   ├── affiliate_utils.py
+│   └── requirements.txt
+└── frontend\
+    ├── app\ (Next.js pages)
+    ├── components\ (React components)
+    ├── lib\ (utilities)
+    ├── store\ (Zustand)
+    └── types\ (TypeScript types)
+```
+
+## DATABASE SCHEMA RULES
+Tables (DO NOT modify without explicit request):
+- users (authentication, premium status, daily limits)
+- stores (100+ e-commerce stores with scraper configs)
+- coupons (discount codes with metadata)
+- categories (fashion, electronics, food-delivery, etc.)
+- coupon_clicks (analytics)
+- coupon_feedback (user verification)
+- scrape_logs (monitoring)
+- subscriptions (Stripe billing)
+
+Key relationships:
+- Store → Many Coupons
+- Store → Many Categories (many-to-many)
+- User → Many Favorites
+- Coupon → Many Clicks
+
+## API ENDPOINT CONVENTIONS
+All endpoints follow this pattern:
+- GET /api/v1/coupons (list with filters: region, country, store_id, category, search)
+- GET /api/v1/coupons/:id (single coupon)
+- POST /api/v1/coupons/:id/click (track click, return affiliate URL)
+- GET /api/v1/stores (list with filters)
+- GET /api/v1/stores/:slug (single store)
+- GET /api/v1/stores/countries?region=america (countries by region)
+- POST /api/v1/auth/login
+- POST /api/v1/auth/register
+- GET /api/v1/auth/me
+
+Rate limiting: 60 requests/minute per IP
+
+## STORE DATABASE RULES
+MUST include these 100+ stores across regions:
+
+America (50 stores):
+- Retail: Amazon, Walmart, Target, BestBuy, Macy's, etc.
+- Food Delivery: UberEats, DoorDash, Grubhub, Postmates, Instacart
+
+Europe (40 stores):
+- Retail: Amazon UK/DE/FR, Zalando, ASOS, Tesco, etc.
+- Food Delivery: Deliveroo, Just Eat, Uber Eats EU, Glovo, Wolt
+
+Asia (45 stores):
+- Retail: Lazada, Shopee, Tokopedia, Flipkart, Amazon India, etc.
+- Food Delivery: GrabFood, Foodpanda, Zomato, Swiggy, GoFood
+
+Each store MUST have:
+- name, slug, domain, region, country, store_type, category
+- affiliate_network (shareasale, cj, rakuten, amazon, etc.)
+- scraper_config (type: generic|javascript, selectors, pagination)
+
+## SCRAPING RULES
+Anti-detection measures (ALWAYS implement):
+- Rotate user agents (fake-useragent)
+- Random delays 1-3 seconds between requests
+- Respect robots.txt
+- Use proxies for high-volume scraping (optional in free tier)
+- Maximum 2 concurrent requests per domain
+- Implement exponential backoff on failures
+
+Scraper types:
+1. Generic (BeautifulSoup) - for static HTML sites
+2. JavaScript (Playwright) - for dynamic/SPA sites
+3. API (direct API access) - when available
+
+Error handling:
+- Log all failures to scrape_logs table
+- Retry failed scrapes 3 times with exponential backoff
+- Alert admin if store fails 5 times consecutively
+- Deactivate coupons past expiry date daily
+
+## FRONTEND COMPONENT RULES
+Naming conventions:
+- Components: PascalCase (CouponCard.tsx)
+- Hooks: camelCase with 'use' prefix (useAppStore.ts)
+- Utilities: camelCase (api.ts, utils.ts)
+- Types: PascalCase interfaces (Coupon, Store, User)
+
+Component patterns:
+- Use 'use client' for interactive components
+- Server components by default
+- Async server components for data fetching
+- Client components for state management
+
+AdMob integration:
+- Show ads ONLY to free users (check user.is_premium)
+- Banner ads: top of pages
+- Native ads: every 6 coupons in grid
+- Interstitial ads: after 3rd coupon click
+- Rewarded ads: optional, gives 10 extra daily coupons
+
+## STYLING RULES (TAILWIND)
+Use ONLY core Tailwind utility classes:
+- Spacing: p-4, m-2, space-y-4, gap-6
+- Layout: flex, grid, items-center, justify-between
+- Typography: text-lg, font-bold, leading-tight
+- Colors: bg-primary, text-muted-foreground, border-border
+- Responsive: sm:, md:, lg: prefixes
+- DO NOT use arbitrary values like p-[13px] unless absolutely necessary
+
+Use shadcn/ui components:
+- Button, Card, Badge, Dialog, Input, Select, Tabs, Toast
+- NEVER create custom versions of these components
+
+## COUNTRY FILTERING IMPLEMENTATION
+Region selector (3 options):
+- 🌎 America (US, CA, MX, BR)
+- 🌍 Europe (GB, DE, FR, ES, IT, NL, PL)
+- 🌏 Asia (SG, MY, TH, PH, ID, VN, IN, CN, JP, KR)
+
+Country selector (dynamic based on region):
+- Shows countries only for selected region
+- "All Countries" option to show all in region
+- Flag emoji + country name (🇺🇸 United States)
+
+Filter persistence:
+- Store region/country in Zustand
+- Persist to localStorage
+- Apply to all coupon/store queries
+
+## MONETIZATION IMPLEMENTATION
+Affiliate URL generation:
+- ShareASale: https://shareasale.com/r.cfm?b={merchant_id}&u={your_id}&urllink={store_url}
+- CJ: https://www.anrdoezrs.net/click-{your_id}-{merchant_id}?url={store_url}
+- Rakuten: https://click.linksynergy.com/deeplink?id={your_id}&mid={merchant_id}&murl={store_url}
+- Amazon: {store_url}?tag={your_tag}
+
+Replace {your_id} and {merchant_id} with actual values from affiliate networks.
+
+AdMob setup:
+1. Sign up at admob.google.com
+2. Create ad units for banner, interstitial, rewarded
+3. Add AdMob script to <head> in layout.tsx
+4. Place <ins> tags with data-ad-client and data-ad-slot
+
+Stripe subscription:
+1. Create products in Stripe dashboard
+2. Implement checkout session creation
+3. Handle webhook for subscription events
+4. Update user.is_premium on successful payment
+
+## DEPLOYMENT RULES
+Backend (Railway):
+- Dockerfile NOT needed (Railway uses Nixpacks)
+- Start command: uvicorn main:app --host 0.0.0.0 --port $PORT
+- Environment variables from Supabase and Upstash
+- Health check endpoint: /health
+
+Scrapers (Railway - 2 services):
+- Worker: celery -A celery_app worker --loglevel=info --concurrency=5
+- Beat: celery -A celery_app beat --loglevel=info
+- Same environment variables as backend
+- Install Playwright browsers: playwright install chromium
+
+Frontend (Vercel):
+- Framework preset: Next.js
+- Build command: npm run build
+- Output directory: .next
+- Environment variables for API_URL and AdMob IDs
+- Edge runtime for API routes (optional)
+
+## COMMON MISTAKES TO AVOID
+❌ Installing anything on C: drive
+❌ Running scrapers locally instead of Railway
+❌ Using localStorage in server components
+❌ Creating custom UI components instead of shadcn/ui
+❌ Forgetting to check user.is_premium before showing ads
+❌ Not implementing rate limiting on API endpoints
+❌ Hardcoding API URLs (use environment variables)
+❌ Using exact Tailwind arbitrary values
+❌ Not handling scraping errors properly
+❌ Forgetting to generate affiliate URLs for clicks
+❌ Not persisting region/country filters
+❌ Showing ads to premium users
+❌ Not implementing daily coupon limits for free users
+
+## CODING PRINCIPLES
+1. Always use TypeScript for type safety
+2. Handle all errors gracefully (try-catch blocks)
+3. Log important actions (scraping, clicks, errors)
+4. Validate all user input (Pydantic, Zod)
+5. Use environment variables for secrets
+6. Comment complex logic
+7. Follow REST API conventions
+8. Keep functions small and focused (single responsibility)
+9. Use meaningful variable names (no single letters except loops)
+10. Test locally before deploying
+
+## WHEN USER ASKS FOR CHANGES
+1. Confirm which phase/component to modify
+2. Check if change affects database schema
+3. Verify change doesn't break existing functionality
+4. Update related components if needed
+5. Maintain consistency with project rules
+6. Ask for clarification if request is ambiguous
+
+## PRIORITIES (IN ORDER)
+1. Free tier compatibility (don't suggest paid services)
+2. E: drive installation (NEVER C: drive)
+3. Region/country filtering (core feature)
+4. Food delivery prominence (key selling point)
+5. Premium vs Free user experience
+6. Mobile responsiveness
+7. AdMob integration
+8. Affiliate tracking accuracy
+9. Scraping reliability
+10. Performance optimization
+
+## IF STUCK OR UNSURE
+Ask the user:
+- "Should this feature be for free users or premium only?"
+- "Which region should this apply to (America/Europe/Asia)?"
+- "Should this be deployed to Railway or Vercel?"
+- "Is this a critical feature or nice-to-have?"
+
+NEVER assume - always clarify with user.
+
+## TESTING CHECKLIST
+Before marking any phase complete, verify:
+- ✅ No errors in terminal/console
+- ✅ Database migrations successful
+- ✅ API endpoints return expected data
+- ✅ Frontend components render without errors
+- ✅ Mobile view looks correct
+- ✅ Ads display (or placeholder shows)
+- ✅ Region/country filters work
+- ✅ Coupon click tracking works
+- ✅ All files on E: drive, not C:
+
+## VERSION CONTROL
+Commit messages should follow:
+- feat: Add new feature
+- fix: Bug fix
+- refactor: Code refactoring
+- style: UI/styling changes
+- docs: Documentation
+- chore: Maintenance tasks
+
+Example: "feat: Add food delivery store filtering"
+
+---END OF .cursorrules FILE---

@@ -1,24 +1,11 @@
-# Web Scraping
+celery[redis]==5.3.4
+redis==5.0.1
 beautifulsoup4==4.12.2
 requests==2.31.0
-scrapy==2.11.0
 playwright==1.40.0
 fake-useragent==1.4.0
-lxml==4.9.3
-
-# Database
+python-dateutil==2.8.2
 sqlalchemy==2.0.23
 psycopg2-binary==2.9.9
-
-# Utilities
-python-dateutil==2.8.2
-python-dotenv==1.0.0
-
-# Configuration
-pydantic[email]==2.5.0
 pydantic-settings==2.1.0
-
-# HTTP client
-httpx==0.25.2
-aiohttp==3.9.1
-
+python-dotenv==1.0.0

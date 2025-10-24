@@ -45,3 +45,8 @@ sentry-sdk[fastapi]==1.38.0
 httpx==0.25.2
 aiohttp==3.9.1
 
+# Additional dependencies for complete setup
+gunicorn==21.2.0
+pytest==7.4.3
+pytest-asyncio==0.21.1
+

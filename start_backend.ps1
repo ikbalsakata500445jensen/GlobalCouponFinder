@@ -40,4 +40,3 @@ else {
     Write-Host "✗ Virtual environment not found!" -ForegroundColor Red
     Write-Host "Please run setup first." -ForegroundColor Red
 }
-
