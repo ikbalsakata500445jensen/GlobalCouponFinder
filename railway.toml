@@ -2,7 +2,7 @@
 builder = "NIXPACKS"
 
 [deploy]
-startCommand = "cd scrapers && celery -A celery_app worker --loglevel=info --concurrency=5"
+startCommand = "python main.py"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
@@ -15,3 +15,4 @@ PLAYWRIGHT_BROWSERS_PATH = "/tmp/playwright-browsers"
 HEADLESS = "true"
 SCRAPE_FREQUENCY_MINUTES = "60"
 USE_PROXIES = "false"
+SERVICE_TYPE = "worker"

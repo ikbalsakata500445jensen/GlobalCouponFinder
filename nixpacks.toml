@@ -3,7 +3,6 @@ nixPkgs = ["python311", "nodejs"]
 
 [phases.install]
 cmds = [
-    "cd scrapers",
     "pip install -r requirements.txt",
     "playwright install chromium"
 ]
@@ -12,4 +11,4 @@ cmds = [
 cmds = ["echo 'Build complete'"]
 
 [start]
-cmd = "cd scrapers && celery -A celery_app worker --loglevel=info --concurrency=5"
+cmd = "python main.py"
