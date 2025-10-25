@@ -5,8 +5,9 @@ import { CouponGrid } from '@/components/coupon/CouponGrid';
 import { StoreGrid } from '@/components/store/StoreGrid';
 import { BannerAd } from '@/components/ads/BannerAd';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Suspense } from 'react';
 
-export default function SearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q') || '';
 
@@ -38,5 +39,13 @@ export default function SearchPage() {
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<div className="container px-4 py-8">Loading...</div>}>
+      <SearchContent />
+    </Suspense>
   );
 }

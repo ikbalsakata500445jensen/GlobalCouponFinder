@@ -2,7 +2,6 @@ export interface User {
   id: string;
   email: string;
   full_name: string;
-  is_premium: boolean;
   region: 'america' | 'europe' | 'asia';
   country: string;
   daily_coupon_count: number;

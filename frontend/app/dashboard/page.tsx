@@ -42,18 +42,14 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Account Status</CardTitle>
-            {user.is_premium ? (
-              <Crown className="h-4 w-4 text-yellow-500" />
-            ) : (
-              <User className="h-4 w-4" />
-            )}
+            <User className="h-4 w-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {user.is_premium ? 'Premium' : 'Free'}
+              Free
             </div>
             <p className="text-xs text-muted-foreground">
-              {user.is_premium ? 'Unlimited access' : 'Limited to 50 coupons/day'}
+              Limited to 50 coupons/day
             </p>
           </CardContent>
         </Card>
@@ -65,7 +61,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {dailyCouponCount} / {user.is_premium ? '∞' : '50'}
+              {dailyCouponCount} / 50
             </div>
             <p className="text-xs text-muted-foreground">
               Coupons used today
@@ -89,27 +85,27 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      {/* Upgrade Banner for Free Users */}
-      {!user.is_premium && (
-        <Card className="mb-8 border-yellow-200 bg-yellow-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold mb-2">Upgrade to Premium</h3>
-                <p className="text-muted-foreground">
-                  Get unlimited coupons, ad-free browsing, and exclusive deals
-                </p>
-              </div>
-              <Button asChild>
-                <Link href="/premium">
-                  <Crown className="w-4 h-4 mr-2" />
-                  Upgrade Now
-                </Link>
-              </Button>
+      {/* Daily Limit Info */}
+      <Card className="mb-8 border-blue-200 bg-blue-50">
+        <CardContent className="pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-blue-800">
+                Daily Coupon Limit
+              </h3>
+              <p className="text-blue-700">
+                You can use up to 50 coupons per day. Limit resets at midnight.
+              </p>
             </div>
-          </CardContent>
-        </Card>
-      )}
+            <div className="text-right">
+              <div className="text-2xl font-bold text-blue-800">
+                {dailyCouponCount} / 50
+              </div>
+              <p className="text-sm text-blue-600">Used today</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <BannerAd />
 

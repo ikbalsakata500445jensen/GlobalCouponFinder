@@ -21,9 +21,9 @@ export function CouponCard({ coupon }: CouponCardProps) {
   const { user, incrementCouponCount, dailyCouponCount } = useAppStore();
 
   const handleCopyCode = async () => {
-    // Check daily limit for free users
-    if (!user?.is_premium && dailyCouponCount >= 50) {
-      toast.error('Daily limit reached! Upgrade to Premium for unlimited coupons.');
+    // Check daily limit for all users
+    if (dailyCouponCount >= 50) {
+      toast.error('Daily limit reached! Come back tomorrow for more coupons.');
       return;
     }
 

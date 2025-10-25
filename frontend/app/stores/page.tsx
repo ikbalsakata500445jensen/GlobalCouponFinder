@@ -6,8 +6,9 @@ import { BannerAd } from '@/components/ads/BannerAd';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAppStore } from '@/store/appStore';
+import { Suspense } from 'react';
 
-export default function StoresPage() {
+function StoresContent() {
   const searchParams = useSearchParams();
   const storeType = searchParams.get('store_type');
   const category = searchParams.get('category');
@@ -68,5 +69,13 @@ export default function StoresPage() {
         limit={50}
       />
     </div>
+  );
+}
+
+export default function StoresPage() {
+  return (
+    <Suspense fallback={<div className="container px-4 py-8">Loading stores...</div>}>
+      <StoresContent />
+    </Suspense>
   );
 }
