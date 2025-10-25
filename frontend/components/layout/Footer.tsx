@@ -97,8 +97,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/premium" className="hover:text-foreground">
-                  Premium
+                <Link href="/dashboard" className="hover:text-foreground">
+                  Dashboard
                 </Link>
               </li>
             </ul>
